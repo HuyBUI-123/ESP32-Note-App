@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/client'
 export default function Home() {
   const supabase = createClient()
 
-  const signInWithGoogle = async () => {
+  const login = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <main className="p-10">
       <button
-        onClick={signInWithGoogle}
+        onClick={login}
         className="bg-black text-white px-4 py-2 rounded"
       >
         Login with Google
