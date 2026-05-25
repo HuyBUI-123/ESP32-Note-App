@@ -3,26 +3,24 @@
 import { createClient } from '@/utils/supabase/client'
 
 export default function Home() {
+  const supabase = createClient()
 
-  const handleTest = async () => {
-
-    const supabase = createClient()
-
-    const { data, error } = await supabase.auth.getSession()
-
-    console.log(data)
-    console.log(error)
-
-    alert('Supabase connected!')
+  const signInWithGoogle = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${location.origin}/auth/callback`
+      }
+    })
   }
 
   return (
     <main className="p-10">
       <button
-        onClick={handleTest}
+        onClick={signInWithGoogle}
         className="bg-black text-white px-4 py-2 rounded"
       >
-        Test Supabase
+        Login with Google
       </button>
     </main>
   )
