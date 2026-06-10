@@ -25,6 +25,8 @@ export default function Dashboard() {
   const [isLoadingDevices, setIsLoadingDevices] = useState(true)
   const [devicesError, setDevicesError] = useState<string | null>(null)
   const [noteEdits, setNoteEdits] = useState<Record<string, string>>({})
+  const [savingNote, setSavingNote] = useState<Record<string, boolean>>({})
+  const [deletingDevice, setDeletingDevice] = useState<Record<string, boolean>>({})
 
   const getToken = async () => {
     const session = await supabase.auth.getSession()
@@ -125,10 +127,12 @@ export default function Dashboard() {
 
   const updateNote = async (deviceId: string) => {
     setStatus(null)
+    setSavingNote((prev) => ({ ...prev, [deviceId]: true }))
 
     const token = await getToken()
     if (!token) {
       setStatus('Please log in again.')
+      setSavingNote((prev) => ({ ...prev, [deviceId]: false }))
       return
     }
 
@@ -144,6 +148,7 @@ export default function Dashboard() {
     })
 
     const data = await res.json()
+    setSavingNote((prev) => ({ ...prev, [deviceId]: false }))
 
     if (!res.ok) {
       setStatus(data?.error ?? 'Failed to update note.')
@@ -156,10 +161,12 @@ export default function Dashboard() {
 
   const deleteDevice = async (deviceId: string) => {
     setStatus(null)
+    setDeletingDevice((prev) => ({ ...prev, [deviceId]: true }))
 
     const token = await getToken()
     if (!token) {
       setStatus('Please log in again.')
+      setDeletingDevice((prev) => ({ ...prev, [deviceId]: false }))
       return
     }
 
@@ -171,6 +178,7 @@ export default function Dashboard() {
     })
 
     const data = await res.json()
+    setDeletingDevice((prev) => ({ ...prev, [deviceId]: false }))
 
     if (!res.ok) {
       setStatus(data?.error ?? 'Failed to delete device.')
@@ -276,15 +284,17 @@ export default function Dashboard() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => updateNote(device.id)}
-                      className="bg-black text-white px-3 py-1 text-sm"
+                      disabled={savingNote[device.id] || deletingDevice[device.id]}
+                      className="bg-black text-white px-3 py-1 text-sm disabled:opacity-50"
                     >
-                      Save Note
+                      {savingNote[device.id] ? 'Saving...' : 'Save Note'}
                     </button>
                     <button
                       onClick={() => deleteDevice(device.id)}
-                      className="bg-red-500 text-white px-3 py-1 text-sm"
+                      disabled={savingNote[device.id] || deletingDevice[device.id]}
+                      className="bg-red-500 text-white px-3 py-1 text-sm disabled:opacity-50"
                     >
-                      Delete Device
+                      {deletingDevice[device.id] ? 'Deleting...' : 'Delete Device'}
                     </button>
                   </div>
                 </div>
