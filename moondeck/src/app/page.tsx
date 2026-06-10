@@ -39,21 +39,23 @@ export default function Home() {
       </div>
 
       <div className="flex gap-2">
-        <button
-          onClick={login}
-          className="bg-black text-white px-4 py-2 rounded"
-        >
-          Login with Google
-        </button>
-
-        {!isChecking && isAuthed ? (
+        {isChecking ? (
+          <div className="px-4 py-2 text-neutral-400 text-sm">Loading...</div>
+        ) : isAuthed ? (
           <Link
             href="/dashboard"
-            className="border border-neutral-300 px-4 py-2 rounded"
+            className="bg-black text-white px-4 py-2 rounded"
           >
             Go to Dashboard
           </Link>
-        ) : null}
+        ) : (
+          <button
+            onClick={login}
+            className="bg-black text-white px-4 py-2 rounded"
+          >
+            Login with Google
+          </button>
+        )}
       </div>
     </main>
   )
