@@ -78,7 +78,7 @@ void fetchAndDisplay() {
   http.begin(SERVER_URL);
   http.addHeader("Content-Type", "application/json");
 
-  StaticJsonDocument<128> reqDoc;
+  JsonDocument reqDoc;
   reqDoc["device_identifier"] = DEVICE_ID;
   reqDoc["device_secret"]     = DEVICE_SECRET;
 
@@ -90,7 +90,7 @@ void fetchAndDisplay() {
   if (statusCode == 200) {
     String payload = http.getString();
 
-    StaticJsonDocument<512> resDoc;
+    JsonDocument resDoc;
     DeserializationError err = deserializeJson(resDoc, payload);
 
     if (!err) {
